@@ -39,14 +39,13 @@ fun SplashScreen () {
         .fillMaxSize()
         .padding(16.dp),
 
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+        //verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
 
     )
     {
-        Row {
-            LoginImage()
-        }
+        LoginImage()
+        WelcomeText()
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             FilledButton("Login")
@@ -78,8 +77,8 @@ fun LoginImage(){
 
     )
 }
-@Preview(showBackground = true)
 @Composable
-fun ButtonsPreview(){
-    SplashScreen()
+fun WelcomeText(){
+    Text(text = "Welcome to my E-Commerce App")
 }
+
