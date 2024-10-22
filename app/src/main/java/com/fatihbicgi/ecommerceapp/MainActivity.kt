@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fatihbicgi.ecommerceapp.splash.LoginScreen
+import com.fatihbicgi.ecommerceapp.splash.RegisterScreen
 import com.fatihbicgi.ecommerceapp.splash.SplashScreen
 import com.fatihbicgi.ecommerceapp.ui.theme.ECommerceAppTheme
 
@@ -27,11 +28,10 @@ class MainActivity : ComponentActivity() {
                     Column(
                         modifier = Modifier
                             .padding(innerPadding),
-                        verticalArrangement  = Arrangement.spacedBy(50.dp),
+                        verticalArrangement = Arrangement.spacedBy(50.dp),
 
-                    ) {
-
-                        LoginScreen()
+                        ) {
+                        RegisterScreen()
                     }
 
                 }

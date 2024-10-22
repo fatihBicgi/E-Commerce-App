@@ -28,25 +28,29 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.fatihbicgi.ecommerceapp.R
 
 @Composable
-fun SplashScreen () {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp),
+fun SplashScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
 
-        //verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
 
-    )
+        )
     {
         LoginImage()
         WelcomeText()
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             FilledButton("Login")
             FilledButton("Register")
@@ -56,7 +60,7 @@ fun SplashScreen () {
 }
 
 @Composable
-fun FilledButton(title : String){
+fun FilledButton(title: String) {
     Button(
         onClick = { /*TODO*/ },
         colors = ButtonDefaults.buttonColors(
@@ -64,11 +68,12 @@ fun FilledButton(title : String){
         ),
     )
     {
-        Text(text =  title)
+        Text(text = title)
     }
 }
+
 @Composable
-fun LoginImage(){
+fun LoginImage() {
     Image(
         painter = painterResource(R.drawable.login),
         contentDescription = "image of login",
@@ -77,8 +82,14 @@ fun LoginImage(){
 
     )
 }
+
 @Composable
-fun WelcomeText(){
-    Text(text = "Welcome to my E-Commerce App")
+fun WelcomeText() {
+    Text(
+        text = "Welcome to my E-Commerce App",
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold
+    )
+
 }
 
