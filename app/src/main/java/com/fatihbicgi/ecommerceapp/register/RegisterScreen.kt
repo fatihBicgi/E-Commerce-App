@@ -1,21 +1,18 @@
-package com.fatihbicgi.ecommerceapp.splash
+package com.fatihbicgi.ecommerceapp.register
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LeadingIconTab
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,10 +25,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fatihbicgi.ecommerceapp.uikit.ECommerceTexField
-
+import kotlinx.serialization.Serializable
 
 @Composable
-fun LoginScreen() {
+fun RegisterScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,7 +42,8 @@ fun LoginScreen() {
         var isPassWordVisible by remember {
             mutableStateOf(false)
         }
-        ECommerceTexField("mail adress", Icons.Filled.Email)
+        ECommerceTexField("name", Icons.Filled.AccountBox)
+        ECommerceTexField("surname", Icons.Filled.AccountCircle)
         ECommerceTexField(
             title = "password",
             leadingIcon = Icons.Filled.List,
@@ -54,13 +52,7 @@ fun LoginScreen() {
                 TextButton(onClick = { isPassWordVisible = !isPassWordVisible }) {
                     Text(text = if (isPassWordVisible) "Hide" else "Show")
                 }
-            }
-        )
+            })
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ButtonsPreview() {
-    LoginScreen()
-}

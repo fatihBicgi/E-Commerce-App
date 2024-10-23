@@ -33,10 +33,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.fatihbicgi.ecommerceapp.R
 
 @Composable
-fun SplashScreen() {
+fun SplashScreen(
+    onGoToLoginScreen: () -> Unit,
+    onGoToRegisterScreen: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -52,25 +58,32 @@ fun SplashScreen() {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            FilledButton("Login")
-            FilledButton("Register")
+            Button(
+                onClick = {
+                    onGoToLoginScreen()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red
+                ),
+            )
+            {
+                Text(text = "Login")
+            }
+            Button(
+                onClick = {
+                    onGoToRegisterScreen()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red
+                ),
+            )
+            {
+                Text(text = "Register")
+            }
         }
     }
-
 }
 
-@Composable
-fun FilledButton(title: String) {
-    Button(
-        onClick = { /*TODO*/ },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Red
-        ),
-    )
-    {
-        Text(text = title)
-    }
-}
 
 @Composable
 fun LoginImage() {

@@ -1,16 +1,12 @@
-package com.fatihbicgi.ecommerceapp.splash
+package com.fatihbicgi.ecommerceapp.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,8 +22,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fatihbicgi.ecommerceapp.uikit.ECommerceTexField
 
+
 @Composable
-fun RegisterScreen() {
+fun LoginScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -41,8 +38,7 @@ fun RegisterScreen() {
         var isPassWordVisible by remember {
             mutableStateOf(false)
         }
-        ECommerceTexField("name", Icons.Filled.AccountBox)
-        ECommerceTexField("surname", Icons.Filled.AccountCircle)
+        ECommerceTexField("mail adress", Icons.Filled.Email)
         ECommerceTexField(
             title = "password",
             leadingIcon = Icons.Filled.List,
@@ -51,7 +47,13 @@ fun RegisterScreen() {
                 TextButton(onClick = { isPassWordVisible = !isPassWordVisible }) {
                     Text(text = if (isPassWordVisible) "Hide" else "Show")
                 }
-            })
+            }
+        )
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun ButtonsPreview() {
+    LoginScreen()
+}
