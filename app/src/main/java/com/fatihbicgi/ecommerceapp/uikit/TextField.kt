@@ -16,16 +16,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 @Composable
 fun ECommerceTexField(
     title: String,
+    value: String,
+    onTextChange : (String) -> Unit,
     leadingIcon: ImageVector,
     trailingIcon: (@Composable () -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
-
-    val textState = rememberSaveable { mutableStateOf("") }
-
     OutlinedTextField(
-        value = textState.value,
-        onValueChange = { textState.value = it },
+        value = value,
+        onValueChange = onTextChange,
 
         label = {
             Text(text = title)

@@ -1,4 +1,4 @@
-package com.fatihbicgi.ecommerceapp.splash
+package com.fatihbicgi.ecommerceapp.scenes.splash
 
 import android.provider.CalendarContract.Colors
 import android.widget.Button

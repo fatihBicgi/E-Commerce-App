@@ -1,10 +1,11 @@
-package com.fatihbicgi.ecommerceapp.login
+package com.fatihbicgi.ecommerceapp.scenes.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Text
@@ -20,27 +21,36 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.fatihbicgi.ecommerceapp.scenes.login.LoginContract
 import com.fatihbicgi.ecommerceapp.uikit.ECommerceTexField
 
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    uiState: LoginContract.UiState,
+    onAction: (LoginContract.UiAction) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp, 100.dp),
-
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
-
-        )
+    )
     {
         var isPassWordVisible by remember {
             mutableStateOf(false)
         }
-        ECommerceTexField("mail adress", Icons.Filled.Email)
+        ECommerceTexField(
+            title = "name",
+            value = uiState.name,
+            onTextChange = { onAction.invoke(LoginContract.UiAction.OnNameChange(it)) },
+            leadingIcon = Icons.Filled.Email
+        )
         ECommerceTexField(
             title = "password",
+            "",
+            {},
             leadingIcon = Icons.Filled.List,
             visualTransformation = if (isPassWordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -55,5 +65,8 @@ fun LoginScreen() {
 @Preview(showBackground = true)
 @Composable
 fun ButtonsPreview() {
-    LoginScreen()
+    LoginScreen(
+        uiState = TODO(),
+        onAction = TODO()
+    )
 }

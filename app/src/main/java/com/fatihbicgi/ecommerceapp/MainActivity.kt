@@ -9,16 +9,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.fatihbicgi.ecommerceapp.login.LoginScreen
-import com.fatihbicgi.ecommerceapp.register.RegisterScreen
-import com.fatihbicgi.ecommerceapp.navigation.ScreenRoutes
-import com.fatihbicgi.ecommerceapp.splash.SplashScreen
+import com.fatihbicgi.ecommerceapp.scenes.login.LoginScreen
+import com.fatihbicgi.ecommerceapp.scenes.register.RegisterScreen
+import com.fatihbicgi.ecommerceapp.scenes.navigation.ScreenRoutes
+import com.fatihbicgi.ecommerceapp.scenes.login.LoginViewModel
+import com.fatihbicgi.ecommerceapp.scenes.navigation.Navigation
+import com.fatihbicgi.ecommerceapp.scenes.register.RegisterViewModel
+import com.fatihbicgi.ecommerceapp.scenes.splash.SplashScreen
 import com.fatihbicgi.ecommerceapp.ui.theme.ECommerceAppTheme
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,30 +49,5 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Navigation(modifier: Modifier = Modifier) {
-    val navController = rememberNavController()
-    NavHost(
-        modifier = modifier,
-        navController = navController,
-        startDestination = ScreenRoutes.SplashScreen
-    ) {
-        composable<ScreenRoutes.SplashScreen> {
-            SplashScreen(
-                onGoToLoginScreen = {
-                    navController.navigate(ScreenRoutes.LoginScreen)
-                }, onGoToRegisterScreen = {
-                    navController.navigate(ScreenRoutes.RegisterScreen)
-                })
-        }
-        composable<ScreenRoutes.LoginScreen> {
-            LoginScreen()
-        }
-        composable<ScreenRoutes.RegisterScreen> {
-            RegisterScreen()
-        }
-
-    }
-}
 
 

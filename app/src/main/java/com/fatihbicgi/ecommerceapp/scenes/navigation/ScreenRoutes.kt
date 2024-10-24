@@ -1,4 +1,4 @@
-package com.fatihbicgi.ecommerceapp.navigation
+package com.fatihbicgi.ecommerceapp.scenes.navigation
 
 import kotlinx.serialization.Serializable
 
