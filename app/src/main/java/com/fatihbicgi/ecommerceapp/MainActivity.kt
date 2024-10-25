@@ -39,8 +39,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .padding(innerPadding),
                         verticalArrangement = Arrangement.spacedBy(50.dp),
-
-                        ) {
+                    ) {
                         Navigation(modifier = Modifier.padding(innerPadding))
                     }
                 }

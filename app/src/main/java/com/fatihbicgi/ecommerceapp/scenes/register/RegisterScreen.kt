@@ -7,7 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -40,28 +44,41 @@ fun RegisterScreen(
             mutableStateOf(false)
         }
         ECommerceTexField(
-            title = "name",
-            value = uiState.name,
-            onTextChange = { onAction.invoke(RegisterContract.UiAction.OnNameChange(it)) },
-            leadingIcon = Icons.Filled.AccountBox
-        )
-        ECommerceTexField(
-            title = "surname",
-            value = uiState.surname,
-            onTextChange = { onAction.invoke(RegisterContract.UiAction.OnSurnameChange(it)) },
+            title = "email",
+            value = uiState.email,
+            onTextChange = { onAction.invoke(RegisterContract.UiAction.OnEmailChange(it)) },
             leadingIcon = Icons.Filled.AccountCircle
         )
         ECommerceTexField(
             title = "password",
-            "",
-            {},
-            leadingIcon = Icons.Filled.List,
+            value = uiState.password,
+            onTextChange = { onAction.invoke(RegisterContract.UiAction.OnPasswordChange(it)) },
+            leadingIcon = Icons.Filled.Build,
             visualTransformation = if (isPassWordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 TextButton(onClick = { isPassWordVisible = !isPassWordVisible }) {
                     Text(text = if (isPassWordVisible) "Hide" else "Show")
                 }
             })
+        ECommerceTexField(
+            title = "name",
+            value = uiState.name,
+            onTextChange = { onAction.invoke(RegisterContract.UiAction.OnNameChange(it)) },
+            leadingIcon = Icons.Filled.Edit
+        )
+        ECommerceTexField(
+            title = "phone",
+            value = uiState.phone,
+            onTextChange = { onAction.invoke(RegisterContract.UiAction.OnPhoneChange(it)) },
+            leadingIcon = Icons.Filled.Phone
+        )
+        ECommerceTexField(
+            title = "address",
+            value = uiState.address,
+            onTextChange = { onAction.invoke(RegisterContract.UiAction.OnAddressChange(it)) },
+            leadingIcon = Icons.Filled.Home
+        )
+
     }
 }
 

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Text
@@ -24,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.fatihbicgi.ecommerceapp.scenes.login.LoginContract
 import com.fatihbicgi.ecommerceapp.uikit.ECommerceTexField
 
-
 @Composable
 fun LoginScreen(
     uiState: LoginContract.UiState,
@@ -38,9 +39,6 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     )
     {
-        var isPassWordVisible by remember {
-            mutableStateOf(false)
-        }
         ECommerceTexField(
             title = "name",
             value = uiState.name,
@@ -49,13 +47,13 @@ fun LoginScreen(
         )
         ECommerceTexField(
             title = "password",
-            "",
-            {},
-            leadingIcon = Icons.Filled.List,
-            visualTransformation = if (isPassWordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            value = uiState.password,
+            onTextChange = { onAction.invoke(LoginContract.UiAction.OnPasswordChange(it)) },
+            leadingIcon = Icons.Filled.Build,
+            visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                TextButton(onClick = { isPassWordVisible = !isPassWordVisible }) {
-                    Text(text = if (isPassWordVisible) "Hide" else "Show")
+                TextButton(onClick = { onAction.invoke(LoginContract.UiAction.OnPasswordVisibilityChange) }) {
+                    Text(text = if (uiState.isPasswordVisible) "Hide" else "Show")
                 }
             }
         )
