@@ -7,7 +7,8 @@ sealed class RegisterContract {
         val password: String,
         val name: String,
         val phone: String,
-        val address: String
+        val address: String,
+        val isPasswordVisible: Boolean
     )
 
     sealed class UiAction {
@@ -31,6 +32,7 @@ sealed class RegisterContract {
             val address: String,
         ) : UiAction()
 
+        data object OnPasswordVisibilityChange : UiAction()
         data object OnRegisterClick : UiAction()
     }
 

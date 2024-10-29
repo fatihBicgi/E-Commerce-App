@@ -1,11 +1,10 @@
 package com.fatihbicgi.ecommerceapp.scenes.register
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fatihbicgi.ecommerceapp.util.AuthStates
-import com.google.firebase.auth.FirebaseAuth
+import com.fatihbicgi.ecommerceapp.data.remote.register.RegisterRequest
+import com.fatihbicgi.ecommerceapp.domain.repository.RegisterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -13,10 +12,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RegisterViewModel @Inject constructor() : ViewModel() {
-
-    lateinit var auth: FirebaseAuth
-    val authState = MutableLiveData<AuthStates>()
+class RegisterViewModel @Inject constructor(
+    private val repository: RegisterRepository,
+) : ViewModel() {
 
     val uiState = MutableStateFlow(
         RegisterContract.UiState(
@@ -25,17 +23,19 @@ class RegisterViewModel @Inject constructor() : ViewModel() {
             name = "",
             phone = "",
             address = "",
+            isPasswordVisible = false,
         )
     )//state flow nedir
 
     fun onAction(action: RegisterContract.UiAction) {
         when (action) {
-            RegisterContract.UiAction.OnRegisterClick -> TODO()
+            RegisterContract.UiAction.OnRegisterClick -> onRegisterClick()
             is RegisterContract.UiAction.OnEmailChange -> onEmailChange(action.email)
             is RegisterContract.UiAction.OnPasswordChange -> OnPasswordChange(action.password)
             is RegisterContract.UiAction.OnNameChange -> onNameChange(action.name)
             is RegisterContract.UiAction.OnPhoneChange -> onPhoneChange(action.phone)
             is RegisterContract.UiAction.OnAddressChange -> onAddressChange(action.address)
+            RegisterContract.UiAction.OnPasswordVisibilityChange -> onPasswordVisibilityChange()
         }
     }
 
@@ -69,20 +69,27 @@ class RegisterViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun registerWithEmailAndPassword(email: String, password: String) {
+    private fun onRegisterClick() {
         viewModelScope.launch {
-            try {
-                authState.value = AuthStates.LOADING
-                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        authState.value = AuthStates.SUCCESS
-                    } else {
-                        authState.value = AuthStates.FAILED
-                    }
-                }
-            } catch (e: Exception) {
-                authState.value = AuthStates.FAILED
-            }
+            val request = RegisterRequest(
+                address = uiState.value.address,
+                email = uiState.value.email,
+                name = uiState.value.name,
+                password = uiState.value.password,
+                phone = uiState.value.phone
+            )
+            val response = repository.register(
+                registerRequest = request
+            )
+            Log.i("apiResponse", response.toString())
         }
     }
+
+    private fun onPasswordVisibilityChange() {
+        uiState.update {
+            it.copy(isPasswordVisible = it.isPasswordVisible.not())
+        }
+    }
+
+
 }

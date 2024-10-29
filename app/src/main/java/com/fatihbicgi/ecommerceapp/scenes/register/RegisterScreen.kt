@@ -12,6 +12,8 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -21,16 +23,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat.Action
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fatihbicgi.ecommerceapp.scenes.login.LoginContract
 import com.fatihbicgi.ecommerceapp.uikit.ECommerceTexField
 
 @Composable
 fun RegisterScreen(
     uiState: RegisterContract.UiState,
-    onAction: (RegisterContract.UiAction) -> Unit,
+    onAction: (RegisterContract.UiAction) -> Unit, // fonksiyonu değişken olarak tanımlıyoruz. ve fonksiyonu taşıyabiliriyoruz
+    // high order funcs
 ) {
     Column(
         modifier = Modifier
@@ -40,9 +47,6 @@ fun RegisterScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     )
     {
-        var isPassWordVisible by remember {
-            mutableStateOf(false)
-        }
         ECommerceTexField(
             title = "email",
             value = uiState.email,
@@ -54,10 +58,10 @@ fun RegisterScreen(
             value = uiState.password,
             onTextChange = { onAction.invoke(RegisterContract.UiAction.OnPasswordChange(it)) },
             leadingIcon = Icons.Filled.Build,
-            visualTransformation = if (isPassWordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                TextButton(onClick = { isPassWordVisible = !isPassWordVisible }) {
-                    Text(text = if (isPassWordVisible) "Hide" else "Show")
+                TextButton(onClick = { onAction.invoke(RegisterContract.UiAction.OnPasswordVisibilityChange) }) {
+                    Text(text = if (uiState.isPasswordVisible) "Hide" else "Show")
                 }
             })
         ECommerceTexField(
@@ -78,7 +82,18 @@ fun RegisterScreen(
             onTextChange = { onAction.invoke(RegisterContract.UiAction.OnAddressChange(it)) },
             leadingIcon = Icons.Filled.Home
         )
-
+        Button(
+            onClick = {
+                onAction.invoke(RegisterContract.UiAction.OnRegisterClick)
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Red
+            ),
+        )
+        {
+            Text(text = "Register")
+        }
     }
+
 }
 
