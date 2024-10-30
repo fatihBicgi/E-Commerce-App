@@ -104,6 +104,11 @@ dependencies {
     implementation (libs.kotlinx.serialization.json.v151)
     implementation (libs.retrofit2.kotlinx.serialization.converter)
 
+    implementation (libs.libphonenumber)
+    implementation (libs.ui)
+    implementation (libs.androidx.compose.material3.material3)
+    implementation (libs.ui.tooling.preview)
+    implementation (libs.androidx.lifecycle.runtime.ktx.vversion)
 
     // ktx
     implementation(libs.androidx.activity.ktx)

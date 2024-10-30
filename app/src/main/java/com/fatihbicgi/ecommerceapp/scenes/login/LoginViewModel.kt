@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fatihbicgi.ecommerceapp.data.remote.login.LoginRequest
-import com.fatihbicgi.ecommerceapp.domain.repository.LoginRepository
+import com.fatihbicgi.ecommerceapp.data.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    val repository: LoginRepository
+    private val repository: LoginRepository
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(
@@ -53,9 +53,10 @@ class LoginViewModel @Inject constructor(
 
     private fun onLoginClick() {
         viewModelScope.launch {
+            val state = uiState.value //ctrl+alt+v kısayolu
             val request = LoginRequest(
-                email = uiState.value.email,
-                password = uiState.value.password
+                email = state.email,
+                password = state.password
             )
             val response = repository.login(
                 loginRequest = request

@@ -1,4 +1,4 @@
-package com.fatihbicgi.ecommerceapp.domain.repository
+package com.fatihbicgi.ecommerceapp.data.repository
 
 import android.util.Log
 import com.fatihbicgi.ecommerceapp.data.remote.login.LoginRequest
@@ -12,5 +12,4 @@ class LoginRepository @Inject constructor(
     suspend fun login(loginRequest: LoginRequest): LoginResponse {
         return loginService.login(loginRequest)
     }
-
-}
+}//repository local mi remote mu karar verir

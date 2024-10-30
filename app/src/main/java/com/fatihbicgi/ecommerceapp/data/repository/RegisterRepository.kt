@@ -1,4 +1,4 @@
-package com.fatihbicgi.ecommerceapp.domain.repository
+package com.fatihbicgi.ecommerceapp.data.repository
 
 import com.fatihbicgi.ecommerceapp.data.remote.register.RegisterRequest
 import com.fatihbicgi.ecommerceapp.data.remote.register.RegisterResponse
@@ -11,4 +11,4 @@ class RegisterRepository @Inject constructor(
     suspend fun register(registerRequest: RegisterRequest): RegisterResponse {
         return registerService.register(registerRequest)
     }
-}
+} //repository local mi remote mu karar verir

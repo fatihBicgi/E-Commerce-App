@@ -1,15 +1,10 @@
 package com.fatihbicgi.ecommerceapp.uikit
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
 
@@ -17,10 +12,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 fun ECommerceTexField(
     title: String,
     value: String,
-    onTextChange : (String) -> Unit,
+    onTextChange: (String) -> Unit,
     leadingIcon: ImageVector,
-    trailingIcon: (@Composable () -> Unit)? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    trailingIcon: @Composable() (() -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     OutlinedTextField(
         value = value,
@@ -37,6 +32,6 @@ fun ECommerceTexField(
 
         },
         singleLine = true,
-        visualTransformation = visualTransformation
+        visualTransformation = visualTransformation,
     )
 }

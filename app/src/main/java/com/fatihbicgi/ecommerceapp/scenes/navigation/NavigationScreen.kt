@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.fatihbicgi.ecommerceapp.scenes.login.LoginScreen
 import com.fatihbicgi.ecommerceapp.scenes.login.LoginViewModel
+import com.fatihbicgi.ecommerceapp.scenes.register.RegisterContract
 import com.fatihbicgi.ecommerceapp.scenes.register.RegisterScreen
 import com.fatihbicgi.ecommerceapp.scenes.register.RegisterViewModel
 import com.fatihbicgi.ecommerceapp.scenes.splash.SplashScreen
@@ -43,7 +44,7 @@ fun Navigation(modifier: Modifier = Modifier) {
             val uiState by viewModel.uiState.collectAsState()
             RegisterScreen(
                 uiState = uiState,
-                onAction = viewModel::onAction
+                onAction = viewModel::onAction,
             )
         }
     }
