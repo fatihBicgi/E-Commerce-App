@@ -11,6 +11,7 @@ import com.fatihbicgi.ecommerceapp.data.remote.register.RegisterRequest
 import com.fatihbicgi.ecommerceapp.data.repository.RegisterRepository
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -32,6 +33,14 @@ class RegisterViewModel @Inject constructor(
             isPasswordVisible = false,
         )
     )
+//ui effect, viewmodeldeki bir aksiyon bir kez çalıştırılması gereken bir şey için kullanılır
+//channel ve sharedflow stateflow araştır, bir kere çalışmasını istediğimiz bir kod
+
+    private val _isRegisteredSuccessfully = MutableStateFlow(false)
+    val isRegisteredSuccessfully: StateFlow<Boolean> = _isRegisteredSuccessfully
+
+    private val _userId = MutableStateFlow<String>("empty")
+    val userId: StateFlow<String> = _userId
 
     fun onAction(action: RegisterContract.UiAction) {
         when (action) {
@@ -118,6 +127,7 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
+
     private fun validateInputs() {
         // Öncelikle eski hata mesajlarını temizle
         uiState.update { currentState ->
@@ -125,7 +135,6 @@ class RegisterViewModel @Inject constructor(
         }
 
         val errors = mutableListOf<String>()
-
         if (uiState.value.name.length < 2) {
             errors.add("Name must be at least 2 characters.")
         }
@@ -144,19 +153,21 @@ class RegisterViewModel @Inject constructor(
             errors.add("Address must be at least 9 characters.")
         }
 
+        if (uiState.value.phone.length < 10) {
+            errors.add("Phone must be at least 10 characters.")
+        }
         // Hataları güncelle
         uiState.update { currentState ->
             currentState.copy(validationErrors = errors)
         }
-
         // Eğer hata yoksa, kayıt işlemini gerçekleştir
         if (errors.isEmpty()) {
-            // Kayıt başarılı mesajı göster
-            Log.i("Registration", "Registration successful!") // Burada log ile yazdık
-            // Kayıt işlemi yapılacak
+            Log.i(
+                "Registration",
+                "Registration successful!"
+            )
             onRegisterClick()
         } else {
-            // Hata mesajlarını güncelledikten sonra kullanıcıya gösterilebilir
             Log.i("Registration", "Errors found: ${errors.joinToString()}")
         }
     }
@@ -174,8 +185,11 @@ class RegisterViewModel @Inject constructor(
             val response = repository.register(
                 registerRequest = request
             )
-            Log.i("apiResponse", response.toString())
+            if (response.status == 200) {
+                _userId.value = response.userId.toString()
+                _isRegisteredSuccessfully.value = true
+                delay(200)
+            } else _isRegisteredSuccessfully.value = false
         }
     }
-
 }

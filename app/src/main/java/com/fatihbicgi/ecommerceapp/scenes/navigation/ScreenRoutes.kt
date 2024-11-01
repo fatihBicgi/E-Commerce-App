@@ -1,5 +1,7 @@
 package com.fatihbicgi.ecommerceapp.scenes.navigation
 
+import android.os.Parcel
+import android.os.Parcelable
 import kotlinx.serialization.Serializable
 
 sealed interface ScreenRoutes {
@@ -11,4 +13,9 @@ sealed interface ScreenRoutes {
 
     @Serializable
     data object SplashScreen : ScreenRoutes
+
+    @Serializable
+    data class UserDetailScreen(val id:String) : ScreenRoutes
 }
+
+//data buradan aktarılabilir mi?

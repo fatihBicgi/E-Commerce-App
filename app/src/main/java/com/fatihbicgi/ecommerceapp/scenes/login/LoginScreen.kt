@@ -36,7 +36,7 @@ fun LoginScreen(
     )
     {
         ECommerceTexField(
-            title = "name",
+            title = "email",
             value = uiState.email,
             onTextChange = { onAction.invoke(LoginContract.UiAction.OnEmailChange(it)) },
             leadingIcon = Icons.Filled.Email,
