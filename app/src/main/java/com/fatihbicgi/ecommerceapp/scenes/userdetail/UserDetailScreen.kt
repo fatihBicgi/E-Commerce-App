@@ -27,7 +27,7 @@ fun UserDetailScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Registration Successful!",
+            text = "Welcome",
             color = Color.Green
         )
         Text(

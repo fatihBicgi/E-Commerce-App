@@ -8,3 +8,5 @@ import javax.inject.Inject
 @HiltViewModel
 class UserDetailViewModel @Inject constructor(
 ) : ViewModel()
+
+//userId burada kullanılmalı

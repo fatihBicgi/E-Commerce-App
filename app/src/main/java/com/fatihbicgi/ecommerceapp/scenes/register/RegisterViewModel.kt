@@ -1,6 +1,9 @@
 package com.fatihbicgi.ecommerceapp.scenes.register
 
-
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,11 +12,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fatihbicgi.ecommerceapp.data.remote.register.RegisterRequest
 import com.fatihbicgi.ecommerceapp.data.repository.RegisterRepository
+import com.fatihbicgi.ecommerceapp.util.NetworkMonitor
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val repository: RegisterRepository,
+    private val networkMonitor: NetworkMonitor,
 ) : ViewModel() {
     val uiState = MutableStateFlow(
         RegisterContract.UiState(
@@ -31,16 +38,14 @@ class RegisterViewModel @Inject constructor(
             formattedPhone = "",
             address = "",
             isPasswordVisible = false,
+            isRegisteredSuccessfuly = false,
         )
     )
-//ui effect, viewmodeldeki bir aksiyon bir kez çalıştırılması gereken bir şey için kullanılır
-//channel ve sharedflow stateflow araştır, bir kere çalışmasını istediğimiz bir kod
+    private val _userId = Channel<String>()
+    val userId = _userId.receiveAsFlow()
 
-    private val _isRegisteredSuccessfully = MutableStateFlow(false)
-    val isRegisteredSuccessfully: StateFlow<Boolean> = _isRegisteredSuccessfully
-
-    private val _userId = MutableStateFlow<String>("empty")
-    val userId: StateFlow<String> = _userId
+    private val _validationMessages = Channel<String>()
+    val validationMessages = _validationMessages.receiveAsFlow()
 
     fun onAction(action: RegisterContract.UiAction) {
         when (action) {
@@ -127,7 +132,6 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-
     private fun validateInputs() {
         // Öncelikle eski hata mesajlarını temizle
         uiState.update { currentState ->
@@ -156,19 +160,20 @@ class RegisterViewModel @Inject constructor(
         if (uiState.value.phone.length < 10) {
             errors.add("Phone must be at least 10 characters.")
         }
+        if (networkMonitor.isNetworkAvailable().not()) {
+            errors.add("Check your internet connection")
+        }
         // Hataları güncelle
         uiState.update { currentState ->
             currentState.copy(validationErrors = errors)
         }
         // Eğer hata yoksa, kayıt işlemini gerçekleştir
-        if (errors.isEmpty()) {
-            Log.i(
-                "Registration",
-                "Registration successful!"
-            )
-            onRegisterClick()
+        if (errors.isNotEmpty()) {
+            viewModelScope.launch {
+                errors.forEach { _validationMessages.send(it) }
+            }
         } else {
-            Log.i("Registration", "Errors found: ${errors.joinToString()}")
+            onRegisterClick() // Hata yoksa login işlemi
         }
     }
 
@@ -186,10 +191,11 @@ class RegisterViewModel @Inject constructor(
                 registerRequest = request
             )
             if (response.status == 200) {
-                _userId.value = response.userId.toString()
-                _isRegisteredSuccessfully.value = true
-                delay(200)
-            } else _isRegisteredSuccessfully.value = false
+                _userId.send(response.userId.toString())
+                uiState.update {
+                    it.copy(isRegisteredSuccessfuly = true)
+                }
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.fatihbicgi.ecommerceapp.retrofit
+package com.fatihbicgi.ecommerceapp.di
 
 
 import com.fatihbicgi.ecommerceapp.data.remote.login.LoginService

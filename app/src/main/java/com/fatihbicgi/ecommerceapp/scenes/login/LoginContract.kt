@@ -5,7 +5,10 @@ sealed class LoginContract {
     data class UiState(
         val email: String,
         val password: String,
-        val isPasswordVisible: Boolean
+        val isPasswordVisible: Boolean,
+        val rememberMe: Boolean,
+        val isLoginSuccessfuly: Boolean,
+        val validationErrors: List<String> = emptyList(),
     )
 
     sealed class UiAction {
@@ -18,6 +21,7 @@ sealed class LoginContract {
         ) : UiAction()
 
         data object OnPasswordVisibilityChange : UiAction()
+        data object OnRememberMeChange : UiAction()
         data object OnLoginClick : UiAction()
     }
 

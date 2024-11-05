@@ -43,6 +43,8 @@ fun SplashScreen(
     onGoToLoginScreen: () -> Unit,
     onGoToRegisterScreen: () -> Unit
 ) {
+    //viewmodelini yaz, viewmodel shared parametre olarak ver, shredden remember me degerini oku
+    //true ise direkt detay ekranına gitsin.
     Column(
         modifier = Modifier
             .fillMaxSize()

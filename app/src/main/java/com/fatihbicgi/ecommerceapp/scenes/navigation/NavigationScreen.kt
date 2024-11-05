@@ -19,6 +19,9 @@ import com.fatihbicgi.ecommerceapp.scenes.register.RegisterScreen
 import com.fatihbicgi.ecommerceapp.scenes.register.RegisterViewModel
 import com.fatihbicgi.ecommerceapp.scenes.splash.SplashScreen
 import com.fatihbicgi.ecommerceapp.scenes.userdetail.UserDetailScreen
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun Navigation(modifier: Modifier = Modifier) {
@@ -39,36 +42,59 @@ fun Navigation(modifier: Modifier = Modifier) {
         composable<ScreenRoutes.LoginScreen> {
             val viewModel = hiltViewModel<LoginViewModel>()
             val uiState by viewModel.uiState.collectAsState()
+            val userId by viewModel.userId.collectAsState(initial = "")
             LoginScreen(
                 uiState = uiState,
-                onAction = viewModel::onAction
-            )
+                onAction = viewModel::onAction,
+                onGoToUserDetailScreen = {
+                    if (uiState.isLoginSuccessfuly) {
+                        navController.navigate(
+                            ScreenRoutes.UserDetailScreen(
+                                id = userId,
+                            )
+                        )
+                        {
+                            popUpTo(ScreenRoutes.SplashScreen) { inclusive = true }
+                        }
+                        Log.i("if register state", uiState.isLoginSuccessfuly.toString())
+                        Log.i("if ScreenRoutes userId", userId)
+                    }
+                    //2. kez tıklandığından gidiyor, önce true yapıyor sonra true olduğu için gidiyor
+                    Log.i("register state", uiState.isLoginSuccessfuly.toString())
+                },
+
+                )
         }
-        composable<ScreenRoutes.RegisterScreen> {//di
+        composable<ScreenRoutes.RegisterScreen> {
             val viewModel = hiltViewModel<RegisterViewModel>()
             val uiState by viewModel.uiState.collectAsState()
-            val isRegisteredSuccessfully by viewModel.isRegisteredSuccessfully.collectAsState()
-            val userId by viewModel.userId.collectAsState()
+            val userId by viewModel.userId.collectAsState(initial = "")
             RegisterScreen(
                 uiState = uiState,
                 onAction = viewModel::onAction,
                 onGoToUserDetailScreen = {
-                    if (isRegisteredSuccessfully) {
-                        navController.navigate(ScreenRoutes.UserDetailScreen(
-                            id =  userId,
-                        ))
-                        Log.i("if register state", isRegisteredSuccessfully.toString())
+                    if (uiState.isRegisteredSuccessfuly) {
+                        navController.navigate(
+                            ScreenRoutes.UserDetailScreen(
+                                id = userId,
+                            )
+                        )
+                        {
+                            popUpTo(ScreenRoutes.SplashScreen) { inclusive = true }
+                        }
+                        Log.i("if register state", uiState.isRegisteredSuccessfuly.toString())
                         Log.i("if ScreenRoutes userId", userId)
                     }
                     //2. kez tıklandığından gidiyor, önce true yapıyor sonra true olduğu için gidiyor
-                    Log.i("register state", isRegisteredSuccessfully.toString())
+                    Log.i("register state", uiState.isRegisteredSuccessfuly.toString())
                 }
             )
         }
         //injectable
-        composable<ScreenRoutes.UserDetailScreen> {backStackEntry ->
+        composable<ScreenRoutes.UserDetailScreen> { backStackEntry ->
             val userId: ScreenRoutes.UserDetailScreen = backStackEntry.toRoute()
             UserDetailScreen(userId.id)
         }
     }
 }
+

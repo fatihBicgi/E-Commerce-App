@@ -36,6 +36,7 @@ import com.fatihbicgi.ecommerceapp.uikit.ECommerceTexField
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.fatihbicgi.ecommerceapp.scenes.login.LoginViewModel
 
 @Composable
 fun RegisterScreen(
@@ -43,85 +44,82 @@ fun RegisterScreen(
     onAction: (RegisterContract.UiAction) -> Unit,// fonksiyonu değişken olarak tanımlıyoruz. ve fonksiyonu taşıyabiliriyoruz
     onGoToUserDetailScreen: () -> Unit,
 ) {
+    val context = LocalContext.current
+    if (uiState.isRegisteredSuccessfuly) onGoToUserDetailScreen.invoke()
+
+    // Hata mesajlarını göster
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(4.dp, 100.dp),
+            .padding(16.dp, 100.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
     )
     {
-        // Hata mesajlarını göster
-        uiState.validationErrors.forEach { error ->
-            Text(
-                text = error,
-                fontSize = 14.sp,
-                color = Color.Red, // Hata mesajları kırmızı renkte
-            )
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Top),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        )
-        {
-            ECommerceTexField(
-                title = "email",
-                value = uiState.email,
-                onTextChange = { onAction.invoke(RegisterContract.UiAction.OnEmailChange(it)) },
-                leadingIcon = Icons.Filled.AccountCircle,
-            )
-            ECommerceTexField(
-                title = "password",
-                value = uiState.password,
-                onTextChange = { onAction.invoke(RegisterContract.UiAction.OnPasswordChange(it)) },
-                leadingIcon = Icons.Filled.Build,
-                trailingIcon = {
-                    TextButton(onClick = { onAction.invoke(RegisterContract.UiAction.OnPasswordVisibilityChange) }) {
-                        Text(text = if (uiState.isPasswordVisible) "Hide" else "Show")
-                    }
-                },
-                visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            )
-            ECommerceTexField(
-                title = "name",
-                value = uiState.name,
-                onTextChange = { onAction.invoke(RegisterContract.UiAction.OnNameChange(it)) },
-                leadingIcon = Icons.Filled.Edit,
-            )
-            ECommerceTexField(
-                title = "phone number",
-                value = uiState.phone,
-                onTextChange = {
-                    // Sadece sayısal karakterleri bırak ve 10 karakterle sınırla
-                    val stripped = it.replace(Regex("[^0-9]"), "")
-                    val formatted =
-                        if (stripped.length >= 10) stripped.substring(0..9) else stripped
-                    onAction(RegisterContract.UiAction.OnPhoneChange(formatted))
-                },
-                leadingIcon = Icons.Filled.Phone,
-                visualTransformation = NanpVisualTransformation(), // Görsel dönüşümü burada uygula
-            )
-
-            ECommerceTexField(
-                title = "address",
-                value = uiState.address,
-                onTextChange = { onAction.invoke(RegisterContract.UiAction.OnAddressChange(it)) },
-                leadingIcon = Icons.Filled.Home,
-            )
-            Button(
-                onClick = {
-                    onAction(RegisterContract.UiAction.OnRegisterClick)
-                    onGoToUserDetailScreen()
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red
-                ),
-            ) {
-                Text(text = "Register")
+        val viewModel = hiltViewModel<RegisterViewModel>()
+        val context = LocalContext.current
+        // not, her tuşa basıldıgında tekrar ediyor
+        // potansiyel sorun spawn edilirse uygulama kasabilir mi?
+        LaunchedEffect(Unit) {
+            viewModel.validationMessages.collect { message ->
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
+        }
+        ECommerceTexField(
+            title = "email",
+            value = uiState.email,
+            onTextChange = { onAction.invoke(RegisterContract.UiAction.OnEmailChange(it)) },
+            leadingIcon = Icons.Filled.AccountCircle,
+        )
+        ECommerceTexField(
+            title = "password",
+            value = uiState.password,
+            onTextChange = { onAction.invoke(RegisterContract.UiAction.OnPasswordChange(it)) },
+            leadingIcon = Icons.Filled.Build,
+            trailingIcon = {
+                TextButton(onClick = { onAction.invoke(RegisterContract.UiAction.OnPasswordVisibilityChange) }) {
+                    Text(text = if (uiState.isPasswordVisible) "Hide" else "Show")
+                }
+            },
+            visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        )
+        ECommerceTexField(
+            title = "name",
+            value = uiState.name,
+            onTextChange = { onAction.invoke(RegisterContract.UiAction.OnNameChange(it)) },
+            leadingIcon = Icons.Filled.Edit,
+        )
+        ECommerceTexField(
+            title = "phone number",
+            value = uiState.phone,
+            onTextChange = {
+                // Sadece sayısal karakterleri bırak ve 10 karakterle sınırla
+                val stripped = it.replace(Regex("[^0-9]"), "")
+                val formatted =
+                    if (stripped.length >= 10) stripped.substring(0..9) else stripped
+                onAction(RegisterContract.UiAction.OnPhoneChange(formatted))
+            },
+            leadingIcon = Icons.Filled.Phone,
+            visualTransformation = NanpVisualTransformation(), // Görsel dönüşümü burada uygula
+        )
+
+        ECommerceTexField(
+            title = "address",
+            value = uiState.address,
+            onTextChange = { onAction.invoke(RegisterContract.UiAction.OnAddressChange(it)) },
+            leadingIcon = Icons.Filled.Home,
+        )
+        Button(
+            onClick = {
+                onAction(RegisterContract.UiAction.OnRegisterClick)
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Red
+            ),
+        ) {
+            Text(text = "Register")
         }
     }
 }
+
 

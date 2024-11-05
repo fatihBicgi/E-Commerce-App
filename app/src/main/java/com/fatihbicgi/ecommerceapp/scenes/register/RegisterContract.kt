@@ -10,6 +10,7 @@ sealed class RegisterContract {
         val formattedPhone: String,
         val address: String,
         val isPasswordVisible: Boolean,
+        val isRegisteredSuccessfuly: Boolean,
         val validationErrors: List<String> = emptyList(),
     )
 
