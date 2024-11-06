@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val repository: LoginRepository,
-    private val shredPref: SharedPreferences,
+    private val sharedPref: SharedPreferences,
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(
@@ -123,7 +123,12 @@ class LoginViewModel @Inject constructor(
                 uiState.update {
                     it.copy(isLoginSuccessfuly = true)
                 }
-
+                if (state.rememberMe) {
+                    sharedPref.edit()
+                        .putString("userId", response.userId.toString())
+                        .putBoolean("rememberMe", true)
+                        .apply()
+                }
             } else
                 _validationMessages.send("User not found")
             uiState.update { currentState ->

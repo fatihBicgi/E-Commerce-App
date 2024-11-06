@@ -1,5 +1,6 @@
 package com.fatihbicgi.ecommerceapp.scenes.splash
 
+import android.content.SharedPreferences
 import android.provider.CalendarContract.Colors
 import android.widget.Button
 import android.window.SplashScreen
@@ -22,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -41,10 +43,20 @@ import com.fatihbicgi.ecommerceapp.R
 @Composable
 fun SplashScreen(
     onGoToLoginScreen: () -> Unit,
-    onGoToRegisterScreen: () -> Unit
+    onGoToRegisterScreen: () -> Unit,
+    onGoToUserDetailScreen: (String) -> Unit,
+    sharedPref: SharedPreferences,
 ) {
-    //viewmodelini yaz, viewmodel shared parametre olarak ver, shredden remember me degerini oku
-    //true ise direkt detay ekranına gitsin.
+    LaunchedEffect(Unit) {
+        // `SharedPreferences`'ten `rememberMe` ve `userId` değerlerini al
+        val isRemembered = sharedPref.getBoolean("rememberMe", false)
+        val savedUserId = sharedPref.getString("userId", null)
+
+        if (isRemembered && savedUserId != null) {
+            // `rememberMe` true ve `userId` kayıtlı ise UserDetailScreen'e yönlendir
+            onGoToUserDetailScreen(savedUserId)
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()

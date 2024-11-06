@@ -1,5 +1,6 @@
 package com.fatihbicgi.ecommerceapp.scenes.navigation
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,12 +20,16 @@ import com.fatihbicgi.ecommerceapp.scenes.register.RegisterScreen
 import com.fatihbicgi.ecommerceapp.scenes.register.RegisterViewModel
 import com.fatihbicgi.ecommerceapp.scenes.splash.SplashScreen
 import com.fatihbicgi.ecommerceapp.scenes.userdetail.UserDetailScreen
+import com.fatihbicgi.ecommerceapp.scenes.userdetail.UserDetailViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
-fun Navigation(modifier: Modifier = Modifier) {
+fun Navigation(
+    modifier: Modifier = Modifier,
+    sharedPref: SharedPreferences
+) {
     val navController = rememberNavController()
     NavHost(
         modifier = modifier,
@@ -35,9 +40,17 @@ fun Navigation(modifier: Modifier = Modifier) {
             SplashScreen(
                 onGoToLoginScreen = {
                     navController.navigate(ScreenRoutes.LoginScreen)
-                }, onGoToRegisterScreen = {
+                },
+                onGoToRegisterScreen = {
                     navController.navigate(ScreenRoutes.RegisterScreen)
-                })
+                },
+                onGoToUserDetailScreen = { userId ->
+                    navController.navigate(ScreenRoutes.UserDetailScreen(id = userId)) {
+                        popUpTo(ScreenRoutes.SplashScreen) { inclusive = true }
+                    }
+                },
+                sharedPref = sharedPref,
+            )
         }
         composable<ScreenRoutes.LoginScreen> {
             val viewModel = hiltViewModel<LoginViewModel>()
@@ -93,7 +106,16 @@ fun Navigation(modifier: Modifier = Modifier) {
         //injectable
         composable<ScreenRoutes.UserDetailScreen> { backStackEntry ->
             val userId: ScreenRoutes.UserDetailScreen = backStackEntry.toRoute()
-            UserDetailScreen(userId.id)
+            val viewModel = hiltViewModel<UserDetailViewModel>()
+            UserDetailScreen(
+                viewModel = viewModel,
+                onLogout = {
+                    navController.navigate(ScreenRoutes.SplashScreen) {
+                        popUpTo(ScreenRoutes.SplashScreen) { inclusive = true }
+                    }
+                },
+                userId = userId.id
+            )
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.fatihbicgi.ecommerceapp
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,6 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sharedPref = getSharedPreferences("ecommerce-sharedpref", Context.MODE_PRIVATE)
         setContent {
             ECommerceAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -40,7 +42,10 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                         verticalArrangement = Arrangement.spacedBy(50.dp),
                     ) {
-                        Navigation(modifier = Modifier.padding(innerPadding))
+                        Navigation(
+                            modifier = Modifier.padding(innerPadding),
+                            sharedPref = sharedPref,
+                        )
                     }
                 }
             }

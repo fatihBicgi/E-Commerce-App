@@ -1,6 +1,7 @@
 package com.fatihbicgi.ecommerceapp.scenes.register
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -28,6 +29,7 @@ import javax.inject.Inject
 class RegisterViewModel @Inject constructor(
     private val repository: RegisterRepository,
     private val networkMonitor: NetworkMonitor,
+    private val sharedPref: SharedPreferences,
 ) : ViewModel() {
     val uiState = MutableStateFlow(
         RegisterContract.UiState(
@@ -192,6 +194,11 @@ class RegisterViewModel @Inject constructor(
             )
             if (response.status == 200) {
                 _userId.send(response.userId.toString())
+                with(sharedPref.edit()) {
+                    putBoolean("rememberMe", true) // Remember me bilgisini kaydet
+                    putString("userId", response.userId.toString()) // Kullanıcı ID'sini kaydet
+                    apply() // Kaydetme işlemini tamamla
+                }
                 uiState.update {
                     it.copy(isRegisteredSuccessfuly = true)
                 }

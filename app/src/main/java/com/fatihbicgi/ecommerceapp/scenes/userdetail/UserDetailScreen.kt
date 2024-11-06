@@ -19,7 +19,9 @@ import kotlinx.serialization.Serializable
 
 @Composable
 fun UserDetailScreen(
-    userId: String
+    viewModel: UserDetailViewModel,
+    onLogout: () -> Unit,
+    userId: String,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -34,5 +36,11 @@ fun UserDetailScreen(
             text = userId,
             color = Color.Black
         )
+        Button(onClick = {
+            viewModel.logout()
+            onLogout()  // Login ekranına yönlendirme yapılabilir
+        }) {
+            Text("Çıkış Yap")
+        }
     }
 }
