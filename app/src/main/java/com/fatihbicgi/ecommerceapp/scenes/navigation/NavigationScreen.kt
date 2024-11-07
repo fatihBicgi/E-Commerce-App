@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,7 +35,7 @@ fun Navigation(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = ScreenRoutes.SplashScreen
+        startDestination = ScreenRoutes.SplashScreen //burada da stardest karar verilebilir
     ) {
         composable<ScreenRoutes.SplashScreen> {
             SplashScreen(
@@ -54,10 +55,12 @@ fun Navigation(
         }
         composable<ScreenRoutes.LoginScreen> {
             val viewModel = hiltViewModel<LoginViewModel>()
+            val uiEffect = viewModel.uiEffect
             val uiState by viewModel.uiState.collectAsState()
             val userId by viewModel.userId.collectAsState(initial = "")
             LoginScreen(
                 uiState = uiState,
+                uiEffect = uiEffect,
                 onAction = viewModel::onAction,
                 onGoToUserDetailScreen = {
                     if (uiState.isLoginSuccessfuly) {
@@ -80,10 +83,12 @@ fun Navigation(
         }
         composable<ScreenRoutes.RegisterScreen> {
             val viewModel = hiltViewModel<RegisterViewModel>()
+            val uiEffect = viewModel.uiEffect
             val uiState by viewModel.uiState.collectAsState()
             val userId by viewModel.userId.collectAsState(initial = "")
             RegisterScreen(
                 uiState = uiState,
+                uiEffect = uiEffect,
                 onAction = viewModel::onAction,
                 onGoToUserDetailScreen = {
                     if (uiState.isRegisteredSuccessfuly) {
@@ -100,8 +105,9 @@ fun Navigation(
                     }
                     //2. kez tıklandığından gidiyor, önce true yapıyor sonra true olduğu için gidiyor
                     Log.i("register state", uiState.isRegisteredSuccessfuly.toString())
-                }
-            )
+                },
+
+                )
         }
         //injectable
         composable<ScreenRoutes.UserDetailScreen> { backStackEntry ->

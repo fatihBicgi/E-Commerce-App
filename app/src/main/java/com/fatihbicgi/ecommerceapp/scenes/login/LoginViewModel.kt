@@ -36,8 +36,8 @@ class LoginViewModel @Inject constructor(
     private val _userId = Channel<String>()
     val userId = _userId.receiveAsFlow()
 
-    private val _validationMessages = Channel<String>()
-    val validationMessages = _validationMessages.receiveAsFlow()
+    private val _uiEffect = Channel<LoginContract.UiEffect>()
+    val uiEffect = _uiEffect.receiveAsFlow()
 
     // Mesajları bir seferlik dinlemek için
 
@@ -100,7 +100,11 @@ class LoginViewModel @Inject constructor(
         // Eğer hata yoksa, kayıt işlemini gerçekleştir
         if (errors.isNotEmpty()) {
             viewModelScope.launch {
-                errors.forEach { _validationMessages.send(it) }
+                _uiEffect.send(
+                    LoginContract.UiEffect.ShowToastMessage(
+                        message = errors.joinToString()
+                    )
+                )
             }
         } else {
             onLoginClick() // Hata yoksa login işlemi
@@ -118,19 +122,26 @@ class LoginViewModel @Inject constructor(
                 loginRequest = request
             )
             if (response.status == 200) {
+                _uiEffect.send(LoginContract.UiEffect.NavigateToUserDetailScreen)
                 //200 dönerse sharedprefe o anki remember me değerini yazdır
                 _userId.send(response.userId.toString())
                 uiState.update {
                     it.copy(isLoginSuccessfuly = true)
                 }
+                //bunu local datasource use case den repositorye local datasource a yazıyor olacak
                 if (state.rememberMe) {
                     sharedPref.edit()
                         .putString("userId", response.userId.toString())
                         .putBoolean("rememberMe", true)
                         .apply()
                 }
-            } else
-                _validationMessages.send("User not found")
+            } else {
+                _uiEffect.send(
+                    LoginContract.UiEffect.ShowToastMessage(
+                        message = "User not found"
+                    )
+                )
+            }
             uiState.update { currentState ->
                 currentState.copy(
                     validationErrors = listOf("User not found")

@@ -1,5 +1,7 @@
 package com.fatihbicgi.ecommerceapp.scenes.login
 
+import android.os.Message
+
 sealed class LoginContract {
 
     data class UiState(
@@ -25,4 +27,10 @@ sealed class LoginContract {
         data object OnLoginClick : UiAction()
     }
 
+    sealed class UiEffect {
+        data class ShowToastMessage(
+            val message: String
+        ) : UiEffect()
+        data object NavigateToUserDetailScreen : UiEffect()
+    }
 }

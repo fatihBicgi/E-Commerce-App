@@ -2,6 +2,7 @@ package com.fatihbicgi.ecommerceapp.di
 
 
 import com.fatihbicgi.ecommerceapp.data.remote.login.LoginService
+import com.fatihbicgi.ecommerceapp.data.remote.products.ProductsService
 import com.fatihbicgi.ecommerceapp.data.remote.register.RegisterService
 import dagger.Module
 import dagger.Provides
@@ -56,6 +57,11 @@ object ApiModule {
         retrofit: Retrofit,
     ): LoginService {
         return retrofit.create(LoginService::class.java)
+    }
+
+    @Provides
+    fun provideProductsService(retrofit: Retrofit): ProductsService {
+        return retrofit.create(ProductsService::class.java)
     }
 
 

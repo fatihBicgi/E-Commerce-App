@@ -31,15 +31,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fatihbicgi.ecommerceapp.uikit.ECommerceTexField
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun LoginScreen(
     uiState: LoginContract.UiState,
+    uiEffect: Flow<LoginContract.UiEffect>,
     onAction: (LoginContract.UiAction) -> Unit,
-    onGoToUserDetailScreen: () -> Unit,
+    onGoToUserDetailScreen: () -> Unit,//
 ) {
-    if (uiState.isLoginSuccessfuly) onGoToUserDetailScreen.invoke()
+    val context = LocalContext.current
 
+    // Toast mesajını tek seferlik dinlemek için
+    LaunchedEffect(Unit) {
+        uiEffect.collect { effect ->
+            when (effect) {
+                is LoginContract.UiEffect.ShowToastMessage -> Toast.makeText(
+                    context,
+                    effect.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                LoginContract.UiEffect.NavigateToUserDetailScreen -> {
+                    onGoToUserDetailScreen.invoke()
+                }
+            }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,15 +66,7 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     )
     {
-        val viewModel = hiltViewModel<LoginViewModel>()
-        val context = LocalContext.current
-        // Toast mesajını tek seferlik dinlemek için
-        LaunchedEffect(Unit) {
-            viewModel.validationMessages.collect { message ->
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            }
-        }
-        // Hata mesajlarını göster
+        // Hata mesajlarını göster text
         /*uiState.validationErrors.forEach { error ->
             //toast sürekli tekrar tekrar yazdırıyor.
             Text(

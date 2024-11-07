@@ -11,6 +11,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +25,18 @@ fun UserDetailScreen(
     onLogout: () -> Unit,
     userId: String,
 ) {
+    val uiEffect = viewModel.uiEffect.collectAsState(initial = null)
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEffect.collect { effect ->
+            when (effect) {
+                is UserDetailContract.UiEffect.NavigateToLoginScreen -> {
+                    onLogout()
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -37,8 +51,7 @@ fun UserDetailScreen(
             color = Color.Black
         )
         Button(onClick = {
-            viewModel.logout()
-            onLogout()  // Login ekranına yönlendirme yapılabilir
+            viewModel.onAction(UserDetailContract.OnAction.Logout)
         }) {
             Text("Çıkış Yap")
         }

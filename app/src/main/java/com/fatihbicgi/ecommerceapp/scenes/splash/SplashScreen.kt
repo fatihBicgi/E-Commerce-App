@@ -45,7 +45,7 @@ fun SplashScreen(
     onGoToLoginScreen: () -> Unit,
     onGoToRegisterScreen: () -> Unit,
     onGoToUserDetailScreen: (String) -> Unit,
-    sharedPref: SharedPreferences,
+    sharedPref: SharedPreferences, //
 ) {
     LaunchedEffect(Unit) {
         // `SharedPreferences`'ten `rememberMe` ve `userId` değerlerini al

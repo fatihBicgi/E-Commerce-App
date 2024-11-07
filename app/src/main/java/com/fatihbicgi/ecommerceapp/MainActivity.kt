@@ -23,6 +23,7 @@ import com.fatihbicgi.ecommerceapp.scenes.register.RegisterScreen
 import com.fatihbicgi.ecommerceapp.scenes.navigation.ScreenRoutes
 import com.fatihbicgi.ecommerceapp.scenes.login.LoginViewModel
 import com.fatihbicgi.ecommerceapp.scenes.navigation.Navigation
+import com.fatihbicgi.ecommerceapp.scenes.products.ProductListScreen
 import com.fatihbicgi.ecommerceapp.scenes.register.RegisterViewModel
 import com.fatihbicgi.ecommerceapp.scenes.splash.SplashScreen
 import com.fatihbicgi.ecommerceapp.ui.theme.ECommerceAppTheme
@@ -42,10 +43,11 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                         verticalArrangement = Arrangement.spacedBy(50.dp),
                     ) {
-                        Navigation(
+                        ProductListScreen()
+                        /*Navigation(
                             modifier = Modifier.padding(innerPadding),
                             sharedPref = sharedPref,
-                        )
+                        )*/
                     }
                 }
             }

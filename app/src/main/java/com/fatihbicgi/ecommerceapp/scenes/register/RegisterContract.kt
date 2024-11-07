@@ -38,4 +38,10 @@ sealed class RegisterContract {
         data object OnPasswordVisibilityChange : UiAction()
         data object OnRegisterClick : UiAction()
     }
+    sealed class UiEffect {
+        data class ShowToastMessage(
+            val message: String
+        ) : UiEffect()
+        data object NavigateToUserDetailScreen : UiEffect()
+    }
 }

@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fatihbicgi.ecommerceapp.data.remote.register.RegisterRequest
 import com.fatihbicgi.ecommerceapp.data.repository.RegisterRepository
+import com.fatihbicgi.ecommerceapp.scenes.login.LoginContract
 import com.fatihbicgi.ecommerceapp.util.NetworkMonitor
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,8 +47,8 @@ class RegisterViewModel @Inject constructor(
     private val _userId = Channel<String>()
     val userId = _userId.receiveAsFlow()
 
-    private val _validationMessages = Channel<String>()
-    val validationMessages = _validationMessages.receiveAsFlow()
+    private val _uiEffect = Channel<RegisterContract.UiEffect>()
+    val uiEffect = _uiEffect.receiveAsFlow()
 
     fun onAction(action: RegisterContract.UiAction) {
         when (action) {
@@ -172,10 +173,14 @@ class RegisterViewModel @Inject constructor(
         // Eğer hata yoksa, kayıt işlemini gerçekleştir
         if (errors.isNotEmpty()) {
             viewModelScope.launch {
-                errors.forEach { _validationMessages.send(it) }
+                _uiEffect.send(
+                    RegisterContract.UiEffect.ShowToastMessage(
+                        message = errors.joinToString()
+                    )
+                )
             }
         } else {
-            onRegisterClick() // Hata yoksa login işlemi
+            onRegisterClick()
         }
     }
 
@@ -193,6 +198,7 @@ class RegisterViewModel @Inject constructor(
                 registerRequest = request
             )
             if (response.status == 200) {
+                _uiEffect.send(RegisterContract.UiEffect.NavigateToUserDetailScreen)
                 _userId.send(response.userId.toString())
                 with(sharedPref.edit()) {
                     putBoolean("rememberMe", true) // Remember me bilgisini kaydet

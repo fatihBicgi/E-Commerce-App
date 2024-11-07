@@ -81,6 +81,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
 
+    implementation(libs.coil.compose.v301)
+    implementation(libs.coil.network.okhttp)
+
     val nav_version = "2.8.3"
 
     // Jetpack Compose integration
