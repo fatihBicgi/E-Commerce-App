@@ -10,4 +10,12 @@ class ProductsRepository @Inject constructor(
     suspend fun getProducts(store: String): ProductsResponse {
         return productsService.getProducts(store)
     }
+
+    suspend fun getSaleProducts(store: String): ProductsResponse {
+        return productsService.getSaleProducts(store)
+    }
+
+    suspend fun getProductsByCategory(store: String, category: String): ProductsResponse {
+        return productsService.getProductsByCategory(store, category)
+    }
 }

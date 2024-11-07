@@ -31,6 +31,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,24 +49,97 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.fatihbicgi.ecommerceapp.data.remote.products.Product
 import com.fatihbicgi.ecommerceapp.uikit.ECommerceTexField
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 
 @Composable
-fun ProductListScreen(viewModel: ProductViewModel = hiltViewModel()) {
-    val products = viewModel.products
-    val errorMessage = viewModel.errorMessage
+fun ProductListScreen(
+    uiState: ProductListContract.UiState,
+    uiEffect: Flow<ProductListContract.UiEffect>,
+    onAction: (ProductListContract.UiAction) -> Unit
+) {
+    val context = LocalContext.current
 
-    if (errorMessage.isNotEmpty()) {
-        Text(text = errorMessage, color = Color.Red)
+    // UI Efektlerini dinleyelim
+    LaunchedEffect(Unit) {
+        uiEffect.collect { effect ->
+            when (effect) {
+                is ProductListContract.UiEffect.ShowErrorMessage -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
+
+                ProductListContract.UiEffect.NavigateToProductDetailScreen -> {
+                    // Navigation işlemi
+                }
+            }
+        }
+    }
+
+    // UI ekranı
+    if (uiState.errorMessage.isNotEmpty()) {
+        Text(text = uiState.errorMessage, color = Color.Red)
     } else {
-        LazyRow(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(8.dp),
-            contentPadding = PaddingValues(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp) // Adjust spacing
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(products) { product ->
-                ProductItem(product)
+            // Kategori Ürünleri
+            item {
+                Text(
+                    text = "Category: Notebook",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(uiState.categoryProducts) { product ->
+                        ProductItem(product)
+                    }
+                }
+            }
+
+            // Ürünler Listesi
+            item {
+                Text(
+                    text = "Products",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(uiState.products) { product ->
+                        ProductItem(product)
+                    }
+                }
+            }
+
+            // İndirimli Ürünler
+            item {
+                Text(
+                    text = "Sale Products",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(uiState.saleProducts) { product ->
+                        ProductItem(product)
+                    }
+                }
             }
         }
     }
@@ -101,12 +175,24 @@ fun ProductItem(product: Product) {
                 )
             }
             Spacer(modifier = Modifier.height(4.dp)) // Spacer between title and price
-            Text(text = "Price: \$${product.price}", fontSize = 14.sp)
-            Text(text = "Sale Price: \$${product.salePrice}", fontSize = 14.sp)
+            Text(
+                text = "Price: \$${product.price}",
+                fontSize = 14.sp
+            )
+            Text(
+                text = "Sale Price: \$${product.salePrice}",
+                fontSize = 14.sp
+            )
             product.description?.let {
                 Spacer(modifier = Modifier.height(8.dp)) // Spacer before description
-                Text(text = it, fontSize = 12.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(
+                    text = it,
+                    fontSize = 12.sp,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }
 }
+

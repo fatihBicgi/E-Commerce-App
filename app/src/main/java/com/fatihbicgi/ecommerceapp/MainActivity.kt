@@ -24,6 +24,7 @@ import com.fatihbicgi.ecommerceapp.scenes.navigation.ScreenRoutes
 import com.fatihbicgi.ecommerceapp.scenes.login.LoginViewModel
 import com.fatihbicgi.ecommerceapp.scenes.navigation.Navigation
 import com.fatihbicgi.ecommerceapp.scenes.products.ProductListScreen
+import com.fatihbicgi.ecommerceapp.scenes.products.ProductListViewModel
 import com.fatihbicgi.ecommerceapp.scenes.register.RegisterViewModel
 import com.fatihbicgi.ecommerceapp.scenes.splash.SplashScreen
 import com.fatihbicgi.ecommerceapp.ui.theme.ECommerceAppTheme
@@ -34,7 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val sharedPref = getSharedPreferences("ecommerce-sharedpref", Context.MODE_PRIVATE)
+        val sharedPref = getSharedPreferences("ecommerce-sharedpref", MODE_PRIVATE)
         setContent {
             ECommerceAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -43,7 +44,14 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                         verticalArrangement = Arrangement.spacedBy(50.dp),
                     ) {
-                        ProductListScreen()
+                        val viewModel = hiltViewModel<ProductListViewModel>()
+                        val uiEffect = viewModel.uiEffect
+                        val uiState by viewModel.uiState.collectAsState()
+                        ProductListScreen(
+                            uiState = uiState,
+                            uiEffect = uiEffect,
+                            onAction = viewModel::onAction,
+                        )
                         /*Navigation(
                             modifier = Modifier.padding(innerPadding),
                             sharedPref = sharedPref,

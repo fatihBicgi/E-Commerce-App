@@ -63,6 +63,4 @@ object ApiModule {
     fun provideProductsService(retrofit: Retrofit): ProductsService {
         return retrofit.create(ProductsService::class.java)
     }
-
-
 }
