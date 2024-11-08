@@ -50,7 +50,6 @@ class MainActivity : ComponentActivity() {
                         ProductListScreen(
                             uiState = uiState,
                             uiEffect = uiEffect,
-                            onAction = viewModel::onAction,
                         )
                         /*Navigation(
                             modifier = Modifier.padding(innerPadding),

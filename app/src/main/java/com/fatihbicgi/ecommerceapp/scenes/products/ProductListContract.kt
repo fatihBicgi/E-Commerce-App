@@ -1,5 +1,6 @@
 package com.fatihbicgi.ecommerceapp.scenes.products
 
+import com.fatihbicgi.ecommerceapp.data.remote.products.Category
 import com.fatihbicgi.ecommerceapp.data.remote.products.Product
 
 sealed class ProductListContract {
@@ -8,16 +9,12 @@ sealed class ProductListContract {
     data class UiState(
         val products: List<Product> = emptyList(),
         val saleProducts: List<Product> = emptyList(),
+        val categories: List<Category> = emptyList(),
         val categoryProducts: List<Product> = emptyList(),
         val errorMessage: String = ""
     )
 
     // UiAction: Kullanıcının gerçekleştirdiği aksiyonları temsil eder
-    sealed class UiAction {
-        data class LoadProducts(val storeName: String) : UiAction()
-        data class LoadSaleProducts(val storeName: String) : UiAction()
-        data class LoadCategoryProducts(val storeName: String, val category: String) : UiAction()
-    }
 
     // UiEffect: UI üzerinde tek seferlik gerçekleşen efektler (toast mesajları, navigation gibi)
     sealed class UiEffect {

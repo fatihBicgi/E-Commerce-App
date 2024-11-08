@@ -21,4 +21,9 @@ interface ProductsService {
         @Header("store") store: String,
         @Query("category") category: String
     ): ProductsResponse
+
+    @GET("get_categories")
+    suspend fun getCategories(
+        @Header("store") store: String
+    ): CategoriesResponse
 }

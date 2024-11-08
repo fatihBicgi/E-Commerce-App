@@ -2,6 +2,7 @@ package com.fatihbicgi.ecommerceapp.scenes.products
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -23,9 +25,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -42,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,7 +66,6 @@ import kotlinx.coroutines.flow.collect
 fun ProductListScreen(
     uiState: ProductListContract.UiState,
     uiEffect: Flow<ProductListContract.UiEffect>,
-    onAction: (ProductListContract.UiAction) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -74,7 +83,6 @@ fun ProductListScreen(
             }
         }
     }
-
     // UI ekranı
     if (uiState.errorMessage.isNotEmpty()) {
         Text(text = uiState.errorMessage, color = Color.Red)
@@ -85,6 +93,38 @@ fun ProductListScreen(
                 .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
+            // Bütün Kategoriler
+            item {
+                Text(
+                    text = "All  Categories",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(uiState.categories) { category ->
+                        Button(
+                            onClick = { },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8A65))
+                        ) {
+                            Text(
+                                textAlign = TextAlign.Center,
+                                text = category.name,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            AsyncImage(
+                                model = category.image,
+                                contentDescription = category.image,
+                            )
+                        }
+                    }
+                }
+            }
             // Kategori Ürünleri
             item {
                 Text(
@@ -149,10 +189,13 @@ fun ProductListScreen(
 fun ProductItem(product: Product) {
     Box(
         modifier = Modifier
-            .height(300.dp)
-            .width(300.dp) // Fixed width for each product item
+            .height(250.dp)
+            .width(250.dp) // Fixed width for each product item
             .padding(8.dp)
-            .background(Color.White, shape = RoundedCornerShape(8.dp))
+            .background(
+                Color.White,
+                shape = RoundedCornerShape(8.dp)
+            )
             .padding(16.dp) // Inner padding
     ) {
         Column {
@@ -167,9 +210,9 @@ fun ProductItem(product: Product) {
                     model = it,
                     contentDescription = product.title,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp) // Fixed height for image consistency
-                        .width(150.dp)
+                        //.fillMaxWidth()
+                        .height(100.dp) // Fixed height for image consistency
+                        .width(100.dp)
                         .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
                 )
