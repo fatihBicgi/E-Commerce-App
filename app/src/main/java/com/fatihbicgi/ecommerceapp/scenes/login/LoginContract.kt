@@ -15,7 +15,7 @@ sealed class LoginContract {
 
     sealed class UiAction {
         class OnEmailChange(
-            val name: String,
+            val email: String,
         ) : UiAction()
 
         class OnPasswordChange(
@@ -31,6 +31,7 @@ sealed class LoginContract {
         data class ShowToastMessage(
             val message: String
         ) : UiEffect()
+
         data object NavigateToUserDetailScreen : UiEffect()
     }
 }

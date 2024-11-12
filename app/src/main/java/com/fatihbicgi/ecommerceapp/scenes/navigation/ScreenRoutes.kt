@@ -15,7 +15,13 @@ sealed interface ScreenRoutes {
     data object SplashScreen : ScreenRoutes
 
     @Serializable
-    data class UserDetailScreen(val id:String) : ScreenRoutes
+    data class UserDetailScreen(val id: String) : ScreenRoutes
+
+    @Serializable
+    data object ProductListScreen : ScreenRoutes
+
+    @Serializable
+    data class ProductDetailScreen(val id: Int) : ScreenRoutes
 }
 
 //data buradan aktarılabilir mi?

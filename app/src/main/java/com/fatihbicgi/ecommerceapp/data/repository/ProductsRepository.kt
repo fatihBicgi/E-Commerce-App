@@ -1,6 +1,7 @@
 package com.fatihbicgi.ecommerceapp.data.repository
 
 import com.fatihbicgi.ecommerceapp.data.remote.products.CategoriesResponse
+import com.fatihbicgi.ecommerceapp.data.remote.products.ProductDetailResponse
 import com.fatihbicgi.ecommerceapp.data.remote.products.ProductsResponse
 import com.fatihbicgi.ecommerceapp.data.remote.products.ProductsService
 import javax.inject.Inject
@@ -18,6 +19,10 @@ class ProductsRepository @Inject constructor(
 
     suspend fun getProductsByCategory(store: String, category: String): ProductsResponse {
         return productsService.getProductsByCategory(store, category)
+    }
+
+    suspend fun getProductDetail(store: String, productId: Int): ProductDetailResponse {
+        return productsService.getProductDetail(store, productId)
     }
 
     suspend fun getCategories(store: String): CategoriesResponse {

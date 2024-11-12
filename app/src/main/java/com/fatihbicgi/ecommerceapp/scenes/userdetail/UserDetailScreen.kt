@@ -17,18 +17,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.fatihbicgi.ecommerceapp.scenes.login.LoginContract
+import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 
 @Composable
 fun UserDetailScreen(
-    viewModel: UserDetailViewModel,
+    uiState: UserDetailContract.UiState,
+    viewModel: UserDetailViewModel, //viewmodelin burada isi yok, kaldır
+    uiEffect: Flow<UserDetailContract.UiEffect>,
     onLogout: () -> Unit,
-    userId: String,
 ) {
-    val uiEffect = viewModel.uiEffect.collectAsState(initial = null)
-
     LaunchedEffect(Unit) {
-        viewModel.uiEffect.collect { effect ->
+        uiEffect.collect { effect ->
             when (effect) {
                 is UserDetailContract.UiEffect.NavigateToLoginScreen -> {
                     onLogout()
@@ -36,7 +37,6 @@ fun UserDetailScreen(
             }
         }
     }
-
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -47,7 +47,7 @@ fun UserDetailScreen(
             color = Color.Green
         )
         Text(
-            text = userId,
+            text = uiState.userId,
             color = Color.Black
         )
         Button(onClick = {

@@ -1,75 +1,51 @@
 package com.fatihbicgi.ecommerceapp.scenes.products
 
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.fatihbicgi.ecommerceapp.data.remote.products.Product
-import com.fatihbicgi.ecommerceapp.uikit.ECommerceTexField
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
+
 
 @Composable
 fun ProductListScreen(
     uiState: ProductListContract.UiState,
     uiEffect: Flow<ProductListContract.UiEffect>,
+    uiAction: (ProductListContract.UiAction) -> Unit,
+    onNavigateToDetail: (Int) -> Unit,
 ) {
     val context = LocalContext.current
-
-    // UI Efektlerini dinleyelim
     LaunchedEffect(Unit) {
         uiEffect.collect { effect ->
             when (effect) {
@@ -77,9 +53,9 @@ fun ProductListScreen(
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
 
-                ProductListContract.UiEffect.NavigateToProductDetailScreen -> {
-                    // Navigation işlemi
-                }
+                is ProductListContract.UiEffect.NavigateToProductDetailScreen -> onNavigateToDetail(
+                    effect.productId
+                )
             }
         }
     }
@@ -139,7 +115,11 @@ fun ProductListScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(uiState.categoryProducts) { product ->
-                        ProductItem(product)
+                        ProductItem(product) {
+                            uiAction.invoke(ProductListContract.UiAction.OnProductClicked(product.id))
+                            //viewModel.onProductClicked(product.id)
+                            //buradan productId'yi viewmodele göndermeliyim ve orada işlemleri yapmalıyım.
+                        }
                     }
                 }
             }
@@ -153,12 +133,17 @@ fun ProductListScreen(
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
                 LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
+
                     contentPadding = PaddingValues(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(uiState.products) { product ->
-                        ProductItem(product)
+                        ProductItem(product) {
+                            // Ürün tıklanınca ViewModel’e bildirme
+                            uiAction.invoke(ProductListContract.UiAction.OnProductClicked(product.id))
+                        }
                     }
                 }
             }
@@ -177,7 +162,10 @@ fun ProductListScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(uiState.saleProducts) { product ->
-                        ProductItem(product)
+                        ProductItem(product) {
+                            // Ürün tıklanınca ViewModel’e bildirme
+                            uiAction.invoke(ProductListContract.UiAction.OnProductClicked(product.id))
+                        }
                     }
                 }
             }
@@ -185,18 +173,17 @@ fun ProductListScreen(
     }
 }
 
+
 @Composable
-fun ProductItem(product: Product) {
+fun ProductItem(product: Product, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .height(250.dp)
-            .width(250.dp) // Fixed width for each product item
+            .width(250.dp)
             .padding(8.dp)
-            .background(
-                Color.White,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(16.dp) // Inner padding
+            .background(Color.White, shape = RoundedCornerShape(8.dp))
+            .clickable { onClick() }  // Tıklama olayını yakalama
+            .padding(16.dp)
     ) {
         Column {
             Text(
@@ -210,32 +197,22 @@ fun ProductItem(product: Product) {
                     model = it,
                     contentDescription = product.title,
                     modifier = Modifier
-                        //.fillMaxWidth()
-                        .height(100.dp) // Fixed height for image consistency
+                        .height(100.dp)
                         .width(100.dp)
                         .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
                 )
             }
-            Spacer(modifier = Modifier.height(4.dp)) // Spacer between title and price
-            Text(
-                text = "Price: \$${product.price}",
-                fontSize = 14.sp
-            )
-            Text(
-                text = "Sale Price: \$${product.salePrice}",
-                fontSize = 14.sp
-            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = "Price: \$${product.price}", fontSize = 14.sp)
+            Text(text = "Sale Price: \$${product.salePrice}", fontSize = 14.sp)
             product.description?.let {
-                Spacer(modifier = Modifier.height(8.dp)) // Spacer before description
-                Text(
-                    text = it,
-                    fontSize = 12.sp,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = it, fontSize = 12.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
         }
     }
+
 }
+
 

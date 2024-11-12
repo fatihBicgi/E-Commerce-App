@@ -11,14 +11,22 @@ sealed class ProductListContract {
         val saleProducts: List<Product> = emptyList(),
         val categories: List<Category> = emptyList(),
         val categoryProducts: List<Product> = emptyList(),
+        val selectedProduct: Product? = null,
         val errorMessage: String = ""
     )
 
-    // UiAction: Kullanıcının gerçekleştirdiği aksiyonları temsil eder
+    sealed class UiAction {
+        class OnProductClicked(
+            val id: Int,
+        ) : UiAction()
+    }
 
     // UiEffect: UI üzerinde tek seferlik gerçekleşen efektler (toast mesajları, navigation gibi)
     sealed class UiEffect {
         data class ShowErrorMessage(val message: String) : UiEffect()
-        object NavigateToProductDetailScreen : UiEffect()
+        data class NavigateToProductDetailScreen(
+            val productId: Int
+        ) : UiEffect()
+
     }
 }

@@ -22,6 +22,13 @@ interface ProductsService {
         @Query("category") category: String
     ): ProductsResponse
 
+    @GET("get_product_detail")
+    suspend fun getProductDetail(
+        @Header("store") store: String,
+        @Query("id") productId: Int
+    ): ProductDetailResponse
+
+
     @GET("get_categories")
     suspend fun getCategories(
         @Header("store") store: String

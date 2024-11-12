@@ -43,7 +43,7 @@ class LoginViewModel @Inject constructor(
 
     fun onAction(action: LoginContract.UiAction) {
         when (action) {
-            is LoginContract.UiAction.OnEmailChange -> onEmailChange(action.name)
+            is LoginContract.UiAction.OnEmailChange -> onEmailChange(action.email)
             is LoginContract.UiAction.OnPasswordChange -> onPasswordChange(action.password)
             LoginContract.UiAction.OnPasswordVisibilityChange -> onPasswordVisibilityChange()
             LoginContract.UiAction.OnRememberMeChange -> onRememberMeChange()

@@ -16,6 +16,10 @@ import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import com.fatihbicgi.ecommerceapp.scenes.login.LoginScreen
 import com.fatihbicgi.ecommerceapp.scenes.login.LoginViewModel
+import com.fatihbicgi.ecommerceapp.scenes.products.ProductDetailScreen
+import com.fatihbicgi.ecommerceapp.scenes.products.ProductDetailViewModel
+import com.fatihbicgi.ecommerceapp.scenes.products.ProductListScreen
+import com.fatihbicgi.ecommerceapp.scenes.products.ProductListViewModel
 import com.fatihbicgi.ecommerceapp.scenes.register.RegisterContract
 import com.fatihbicgi.ecommerceapp.scenes.register.RegisterScreen
 import com.fatihbicgi.ecommerceapp.scenes.register.RegisterViewModel
@@ -35,8 +39,9 @@ fun Navigation(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = ScreenRoutes.SplashScreen //burada da stardest karar verilebilir
+        startDestination = ScreenRoutes.ProductListScreen //burada da stardest karar verilebilir
     ) {
+
         composable<ScreenRoutes.SplashScreen> {
             SplashScreen(
                 onGoToLoginScreen = {
@@ -111,8 +116,9 @@ fun Navigation(
         }
         //injectable
         composable<ScreenRoutes.UserDetailScreen> { backStackEntry ->
-            val userId: ScreenRoutes.UserDetailScreen = backStackEntry.toRoute()
-            val viewModel = hiltViewModel<UserDetailViewModel>()
+            val viewModel = hiltViewModel<UserDetailViewModel>(backStackEntry)
+            val uiState by viewModel.uiState.collectAsState()
+            val uiEffect = viewModel.uiEffect
             UserDetailScreen(
                 viewModel = viewModel,
                 onLogout = {
@@ -120,9 +126,31 @@ fun Navigation(
                         popUpTo(ScreenRoutes.SplashScreen) { inclusive = true }
                     }
                 },
-                userId = userId.id
+                uiState = uiState,
+                uiEffect = uiEffect,
+            )
+        }
+        composable<ScreenRoutes.ProductListScreen> {
+            val viewModel = hiltViewModel<ProductListViewModel>()
+            val uiEffect = viewModel.uiEffect
+            val uiState by viewModel.uiState.collectAsState()
+            ProductListScreen(
+                uiState = uiState,
+                uiEffect = uiEffect,
+                uiAction = viewModel::onAction,
+                onNavigateToDetail = {
+                    navController.navigate(ScreenRoutes.ProductDetailScreen(id = it))
+                }
+            )
+        }
+        composable<ScreenRoutes.ProductDetailScreen> { backStackEntry ->
+            val viewModel = hiltViewModel<ProductDetailViewModel>(backStackEntry)
+            val uiState by viewModel.uiState.collectAsState()
+            ProductDetailScreen(
+                uiState = uiState,
             )
         }
     }
+
 }
 

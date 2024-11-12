@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -23,6 +24,8 @@ import com.fatihbicgi.ecommerceapp.scenes.register.RegisterScreen
 import com.fatihbicgi.ecommerceapp.scenes.navigation.ScreenRoutes
 import com.fatihbicgi.ecommerceapp.scenes.login.LoginViewModel
 import com.fatihbicgi.ecommerceapp.scenes.navigation.Navigation
+import com.fatihbicgi.ecommerceapp.scenes.products.ProductDetailScreen
+import com.fatihbicgi.ecommerceapp.scenes.products.ProductDetailViewModel
 import com.fatihbicgi.ecommerceapp.scenes.products.ProductListScreen
 import com.fatihbicgi.ecommerceapp.scenes.products.ProductListViewModel
 import com.fatihbicgi.ecommerceapp.scenes.register.RegisterViewModel
@@ -44,17 +47,12 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding),
                         verticalArrangement = Arrangement.spacedBy(50.dp),
                     ) {
-                        val viewModel = hiltViewModel<ProductListViewModel>()
-                        val uiEffect = viewModel.uiEffect
-                        val uiState by viewModel.uiState.collectAsState()
-                        ProductListScreen(
-                            uiState = uiState,
-                            uiEffect = uiEffect,
-                        )
-                        /*Navigation(
+
+                        Navigation(
                             modifier = Modifier.padding(innerPadding),
                             sharedPref = sharedPref,
-                        )*/
+                        )
+
                     }
                 }
             }

@@ -1,10 +1,12 @@
 package com.fatihbicgi.ecommerceapp.scenes.products
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fatihbicgi.ecommerceapp.data.remote.products.CategoriesResponse
 import com.fatihbicgi.ecommerceapp.data.remote.products.ProductsResponse
 import com.fatihbicgi.ecommerceapp.data.repository.ProductsRepository
+import com.fatihbicgi.ecommerceapp.scenes.login.LoginContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -31,6 +33,19 @@ class ProductListViewModel @Inject constructor(
         loadDataConcurrently("canerture")
     }
 
+    fun onAction(action: ProductListContract.UiAction) {
+        when (action) {
+            is ProductListContract.UiAction.OnProductClicked -> onProductClicked(action.id)
+        }
+    }
+
+    // Yeni fonksiyon: Ürün detayını yükleme ve navigasyon tetikleme
+    fun onProductClicked(productId: Int) {
+        viewModelScope.launch {
+            _uiEffect.send(ProductListContract.UiEffect.NavigateToProductDetailScreen(productId))
+        }
+    }
+
     //ayrı istekler ama tek seferde birlikte ui ekranı güncellemek
     private fun loadDataConcurrently(storeName: String) {
         viewModelScope.launch {
@@ -40,7 +55,7 @@ class ProductListViewModel @Inject constructor(
                     async { productRepository.getProducts(storeName) },
                     async { productRepository.getSaleProducts(storeName) },
                     async { productRepository.getProductsByCategory(storeName, "Notebook") },
-                    async { productRepository.getCategories(storeName) }
+                    async { productRepository.getCategories(storeName) },
                 )
 
                 // Process the results once all requests are finished
@@ -69,81 +84,101 @@ class ProductListViewModel @Inject constructor(
     }
 
 
-//paralel istekler ile ekranı güncellemek
+//paralel istekler ile ekranı güncellemek için
 
-    /*    private fun loadProducts(storeName: String) {
-            viewModelScope.launch {
-                try {
-                    val response = productRepository.getProducts(storeName)
-                    if (response.status == 200) {
-                        _uiState.update { it.copy(products = response.products) }
-                    } else {
-                        _uiState.update {
-                            it.copy(
-                                errorMessage = response.message ?: "Bilinmeyen bir hata oluştu"
-                            )
-                        }
-                    }
-                } catch (e: Exception) {
-                    _uiState.update { it.copy(errorMessage = "Veri yüklenemedi: ${e.localizedMessage}") }
-                }
-            }
-        }
+    /*   private fun loadProducts(storeName: String) {
+           viewModelScope.launch {
+               try {
+                   val response = productRepository.getProducts(storeName)
+                   if (response.status == 200) {
+                       _uiState.update { it.copy(products = response.products) }
+                   } else {
+                       _uiState.update {
+                           it.copy(
+                               errorMessage = response.message ?: "Bilinmeyen bir hata oluştu"
+                           )
+                       }
+                   }
+               } catch (e: Exception) {
+                   _uiState.update { it.copy(errorMessage = "Veri yüklenemedi: ${e.localizedMessage}") }
+               }
+           }
+       }
 
-        private fun loadSaleProducts(storeName: String) {
-            viewModelScope.launch {
-                try {
-                    val response = productRepository.getSaleProducts(storeName)
-                    if (response.status == 200) {
-                        _uiState.update { it.copy(saleProducts = response.products) }
-                    } else {
-                        _uiState.update {
-                            it.copy(
-                                errorMessage = response.message ?: "Bilinmeyen bir hata oluştu"
-                            )
-                        }
-                    }
-                } catch (e: Exception) {
-                    _uiState.update { it.copy(errorMessage = "Veri yüklenemedi: ${e.localizedMessage}") }
-                }
-            }
-        }
+       private fun loadSaleProducts(storeName: String) {
+           viewModelScope.launch {
+               try {
+                   val response = productRepository.getSaleProducts(storeName)
+                   if (response.status == 200) {
+                       _uiState.update { it.copy(saleProducts = response.products) }
+                   } else {
+                       _uiState.update {
+                           it.copy(
+                               errorMessage = response.message ?: "Bilinmeyen bir hata oluştu"
+                           )
+                       }
+                   }
+               } catch (e: Exception) {
+                   _uiState.update { it.copy(errorMessage = "Veri yüklenemedi: ${e.localizedMessage}") }
+               }
+           }
+       }
 
-        private fun loadCategoryProducts(storeName: String, category: String) {
-            viewModelScope.launch {
-                try {
-                    val response = productRepository.getProductsByCategory(storeName, category)
-                    if (response.status == 200) {
-                        _uiState.update { it.copy(categoryProducts = response.products) }
-                    } else {
-                        _uiState.update {
-                            it.copy(
-                                errorMessage = response.message ?: "Bilinmeyen bir hata oluştu"
-                            )
-                        }
-                    }
-                } catch (e: Exception) {
-                    _uiState.update { it.copy(errorMessage = "Veri yüklenemedi: ${e.localizedMessage}") }
-                }
-            }
-        }
+       private fun loadCategoryProducts(storeName: String, category: String) {
+           viewModelScope.launch {
+               try {
+                   val response = productRepository.getProductsByCategory(storeName, category)
+                   if (response.status == 200) {
+                       _uiState.update { it.copy(categoryProducts = response.products) }
+                   } else {
+                       _uiState.update {
+                           it.copy(
+                               errorMessage = response.message ?: "Bilinmeyen bir hata oluştu"
+                           )
+                       }
+                   }
+               } catch (e: Exception) {
+                   _uiState.update { it.copy(errorMessage = "Veri yüklenemedi: ${e.localizedMessage}") }
+               }
+           }
+       }
 
-        private fun loadCategories(storeName: String) {
-            viewModelScope.launch {
-                try {
-                    val response = productRepository.getCategories(storeName)
-                    if (response.status == 200) {
-                        _uiState.update { it.copy(categories = response.categories) }
-                    } else {
-                        _uiState.update {
-                            it.copy(
-                                errorMessage = response.message ?: "Error fetching categories"
-                            )
-                        }
-                    }
-                } catch (e: Exception) {
-                    _uiState.update { it.copy(errorMessage = "Error fetching categories: ${e.localizedMessage}") }
-                }
-            }
-        }*/
+       private fun loadCategories(storeName: String) {
+           viewModelScope.launch {
+               try {
+                   val response = productRepository.getCategories(storeName)
+                   if (response.status == 200) {
+                       _uiState.update { it.copy(categories = response.categories) }
+                   } else {
+                       _uiState.update {
+                           it.copy(
+                               errorMessage = response.message ?: "Error fetching categories"
+                           )
+                       }
+                   }
+               } catch (e: Exception) {
+                   _uiState.update { it.copy(errorMessage = "Error fetching categories: ${e.localizedMessage}") }
+               }
+           }
+           fun loadProductDetail(store: String, productId: Int) {
+               viewModelScope.launch {
+                   try {
+                       val response = productRepository.getProductDetail(store, productId)
+                       if (response.status == 200) {
+                           // UI state'i ürün detaylarıyla güncelle
+                           _uiState.update { it.copy(selectedProduct = response.product) }
+                           _uiEffect.send(ProductListContract.UiEffect.NavigateToProductDetailScreen)
+                       } else {
+                           _uiEffect.send(
+                               ProductListContract.UiEffect.ShowErrorMessage(
+                                   response.message ?: "Ürün detayı yüklenemedi"
+                               )
+                           )
+                       }
+                   } catch (e: Exception) {
+                       _uiEffect.send(ProductListContract.UiEffect.ShowErrorMessage("Veri yüklenemedi: ${e.localizedMessage}"))
+                   }
+               }
+           }
+       }*/
 }
